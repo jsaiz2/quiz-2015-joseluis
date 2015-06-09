@@ -1,0 +1,9 @@
+<h3>Registros de la tabla que cumplen los criterios:</h3>  "<%= search %>"
+<div align=center>
+<table>
+	<tr><th> Pregunta </th><th></th><th> Respuesta </th></tr>
+<% var i; for (i=0; i < quizes.length; i++) { %>	
+	<tr><td><%= quizes[i].pregunta %></td><td></td><td><%= quizes[i].respuesta %></td></tr>
+	<% } %>
+</table>
+</div>

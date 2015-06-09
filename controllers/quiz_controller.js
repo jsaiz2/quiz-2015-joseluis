@@ -20,6 +20,17 @@ exports.index = function(req, res){
 	).catch(function(error) {next(error);})
 };
 
+// GET /quizes/busqueda
+exports.busqueda = function(req, res){
+	// toma la query la preforma para la consulta con expresiones regulares
+	var search = '%' + (req.query.search).replace(/ /g,'%') + '%';
+	// ? se sustituye por search
+	models.Quiz.findAll({where:['pregunta like?', search ], order : 'pregunta ASC'}).then(function(quizes){
+	// pasa a vista la cadena buscada para mensaje
+    	res.render( 'quizes/busqueda', {quizes: quizes, search: req.query.search});
+		}
+	).catch(function(error) {next(error);})
+};
 // GET /quizes/:id
 exports.show = function(req, res){
 	res.render('quizes/show', {quiz: req.quiz});	
