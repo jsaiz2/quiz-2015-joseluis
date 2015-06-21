@@ -20,6 +20,25 @@ exports.index = function(req, res){
 	).catch(function(error) {next(error);})
 };
 
+// GET /quizes/new
+exports.new = function(req, res){
+	var quiz = models.Quiz.build( // crea objeto quiz
+		{pregunta: "Pregunta", respuesta: "Respuesta"}
+	);
+
+	res.render('quizes/new', {quiz:quiz});
+};
+
+// POST /quizes/create
+exports.create = function(req, res){
+	var quiz = models.Quiz.build (req.body.quiz);
+
+// guarda en BD los campos pregunta y respuestade quiz
+	quiz.save({fields:["pregunta", "respuesta"]}).then(function(){
+		res.redirect('/quizes');
+	})		//Redirección HTTP (URL relativo) lista de preguntas
+};
+
 // GET /quizes/busqueda
 exports.busqueda = function(req, res){
 	// toma la query la preforma para la consulta con expresiones regulares
