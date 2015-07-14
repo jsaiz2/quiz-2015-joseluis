@@ -20,6 +20,7 @@ router.param('quizId', quizController.load); // autoload :quizId
 router.param('commentId', commentController.load); // autoload :commentId
 
 // Definición de rutas de session
+router.use(sessionController.autoLogout);               // AutoLogout
 router.get('/login',        sessionController.new);     // formulario de login
 router.post('/login',       sessionController.create);  // crear sesión
 router.get('/logout',       sessionController.destroy); // destruir sesión
@@ -34,6 +35,7 @@ router.get('/quizes/:quizId(\\d+)/edit',    sessionController.loginRequired, qui
 router.put('/quizes/:quizId(\\d+)',         sessionController.loginRequired, quizController.update);
 router.delete('/quizes/:quizId(\\d+)',      sessionController.loginRequired, quizController.destroy);
 router.get('/quizes/busqueda',              quizController.busqueda);
+router.get('/quizes/statics',               quizController.statics);
 
 // Definición de rutas de comentarios
 router.get('/quizes/:quizId(\\d+)/comments/new',       commentController.new);

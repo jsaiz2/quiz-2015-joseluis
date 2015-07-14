@@ -109,3 +109,28 @@ exports.destroy = function(req, res) {
 		res.redirect('/quizes');
 	}).catch(function (error){next(error)});
 };
+
+// GET /quizes/statics
+exports.statics = function (req, res) {
+	var statics = {nQuizes:0,
+					nComments: 0,
+					avComments: 0,
+				    noComments: 0,
+				    withComments: 0};        // Inicializo las variables contadoras agrupadas en array
+	var options = {include: [{all: true}]};  // preparo la consulta relacional
+
+	models.Quiz.findAll(options).then(function(quizes){     
+
+		statics.nQuizes = quizes.length;
+		for (i in quizes){
+			statics.nComments += quizes[i].Comments.length;
+			if (quizes[i].Comments.length === 0) {
+				statics.noComments += 1} else {statics.withComments += 1}
+			}
+			statics.avComments += statics.nComments/statics.nQuizes;
+			var media = statics.avComments;
+			statics.avComments = media.toFixed(2)
+			res.render('quizes/statics.ejs', {statics: statics, errors:[]});
+		}).catch(function(error) { next(error);})
+
+};

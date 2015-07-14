@@ -23,8 +23,8 @@ exports.create = function(req, res) {
 	var userController = require('./user_controller');
 	userController.autenticar(login, password, function(error, user) {
 		if (error) {	// si hay error retornamos mensajes de error de sesión
-			req.session.errors = [{"message": 'Se ha producido un error: '+error}];
-			res.redirect("/login");
+			req.session.errors = [{"message": 'Se ha producido un error: '+ error}];
+			res.redirect('/login');
 			return;
 		}
 
@@ -40,4 +40,24 @@ exports.create = function(req, res) {
 exports.destroy = function(req, res) {
 	delete req.session.user;
 	res.redirect(req.session.redir.toString()); // redirección a path anterior a login
+};
+
+// AutoLogout
+exports.autoLogout = function( req, res, next) {
+
+	if (req.session.user) {
+		var lastTime = req.session.lastTime || Date.now(); // Consulto si existe la  propiedad tiempo e inicializo variable tiempo
+		req.session.lastTime = lastTime;                   // redefino la propiedad tiempo de sesión
+		var nowTime = Date.now();                          // defino tiempo actual
+			if (nowTime - lastTime > 120000) {
+				req.session.errors = [{"message": 'Timeout: Han pasado más de 2 minutos sin actividad. Debe registrarse otra vez. '}];
+				delete req.session.user;                   // cierra la sesión borrando la variable
+				delete req.session.lastTime;			   // elimino la propiedad lastTime para inicializar o bien	
+				//req.session.lastTime = nowTime;		   // reinicio el contador. Ambos métodos valen
+				res.redirect('/login');                    // redirección a la pantalla de registro
+			
+			};
+			req.session.lastTime = nowTime;
+	}
+	next();
 };
